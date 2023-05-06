@@ -378,6 +378,164 @@ const gpuAdapter = await navigator.gpu.requestAdapter();
 const gpuDevice = await gpuAdapter.requestDevice();
 ```
 
+#### 4.3.1. `GPUDeviceDescriptor`[](https://www.w3.org/TR/webgpu/#gpudevicedescriptor)
+
+`GPUDeviceDescriptor` 用来描述申请设备的需求。
+
+```
+dictionary GPUDeviceDescriptor
+         : GPUObjectDescriptorBase {
+    sequence<GPUFeatureName> requiredFeatures = [];
+    record<DOMString, GPUSize64> requiredLimits = {};
+    GPUQueueDescriptor defaultQueue = {};
+};
+```
+
+`GPUDeviceDescriptor` 有下列成员：
+
+- `requiredFeatures`, 类型属于<[GPUFeatureName](https://www.w3.org/TR/webgpu/#gpufeaturename)>，默认是 `[]`
+
+  指定设备请求所需的[功能](https://www.w3.org/TR/webgpu/#feature)。如果适配器无法提供这些功能，则请求将失败。
+
+  在生成的设备上对验证可调用的API时，功能集应该恰好和指定一致，不多也不少。
+
+- `requiredLimits`, 类型为 Record<[DOMString](https://webidl.spec.whatwg.org/#idl-DOMString), [GPUSize64](https://www.w3.org/TR/webgpu/#typedefdef-gpusize64)>, defaulting to `{}`
+
+  指定设备请求所需的[限制(limits)](https://www.w3.org/TR/webgpu/#limit)。如果适配器无法提供这些限制，则请求将失败。
+
+  每个键必须是[supported limits](https://www.w3.org/TR/webgpu/#supported-limits)中的成员名称。在生成的设备上对API调用进行验证时，限制会恰好满足条件，不会更好或更差。
+
+- `defaultQueue`, 类型为[GPUQueueDescriptor](https://www.w3.org/TR/webgpu/#gpuqueuedescriptor), 默认值是 `{}`
+
+  对默认的`GPUQueue`的描述
+
+[Example 10](https://www.w3.org/TR/webgpu/#example-8a22c3e3)
+
+如果支持，申请一个具有`"texture-compression-astc"`特性的`GPUDevice`：
+
+```
+const gpuAdapter = await navigator.gpu.requestAdapter();
+
+const requiredFeatures = [];
+if (gpuAdapter.features.has('texture-compression-astc')) {
+    requiredFeatures.push('texture-compression-astc')
+}
+
+const gpuDevice = await gpuAdapter.requestDevice({
+    requiredFeatures
+});
+```
+
+##### 4.3.1.1. `GPUFeatureName`[](https://www.w3.org/TR/webgpu/#gpufeaturename)
+
+每个`GPUFeatureName`标识了一组功能，如果可用，将允许使用WebGPU附加的用法，否则这些用法是无效的。
+
+```
+enum GPUFeatureName {
+    "depth-clip-control",
+    "depth32float-stencil8",
+    "texture-compression-bc",
+    "texture-compression-etc2",
+    "texture-compression-astc",
+    "timestamp-query",
+    "indirect-first-instance",
+    "shader-f16",
+    "rg11b10ufloat-renderable",
+    "bgra8unorm-storage",
+    "float32-filterable",
+};
+```
+
+### 4.4. `GPUDevice`[](https://www.w3.org/TR/webgpu/#gpudevice)
+
+`GPUDevice`封装了一个[device](https://www.w3.org/TR/webgpu/#device)，并公开了该设备的功能函数。
+
+`GPUDevice`是创建WebGPU接口的[最上层接口](https://www.w3.org/TR/webgpu/#webgpu-interface)。
+
+要获取`GPUDevice`，使用`requestDevice()`。
+
+```
+[Exposed=(Window, DedicatedWorker), SecureContext]
+interface GPUDevice : EventTarget {
+    [SameObject] readonly attribute GPUSupportedFeatures features;
+    [SameObject] readonly attribute GPUSupportedLimits limits;
+
+    [SameObject] readonly attribute GPUQueue queue;
+
+    undefined destroy();
+
+    GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
+    GPUTexture createTexture(GPUTextureDescriptor descriptor);
+    GPUSampler createSampler(optional GPUSamplerDescriptor descriptor = {});
+    GPUExternalTexture importExternalTexture(GPUExternalTextureDescriptor descriptor);
+
+    GPUBindGroupLayout createBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
+    GPUPipelineLayout createPipelineLayout(GPUPipelineLayoutDescriptor descriptor);
+    GPUBindGroup createBindGroup(GPUBindGroupDescriptor descriptor);
+
+    GPUShaderModule createShaderModule(GPUShaderModuleDescriptor descriptor);
+    GPUComputePipeline createComputePipeline(GPUComputePipelineDescriptor descriptor);
+    GPURenderPipeline createRenderPipeline(GPURenderPipelineDescriptor descriptor);
+    Promise<GPUComputePipeline> createComputePipelineAsync(GPUComputePipelineDescriptor descriptor);
+    Promise<GPURenderPipeline> createRenderPipelineAsync(GPURenderPipelineDescriptor descriptor);
+
+    GPUCommandEncoder createCommandEncoder(optional GPUCommandEncoderDescriptor descriptor = {});
+    GPURenderBundleEncoder createRenderBundleEncoder(GPURenderBundleEncoderDescriptor descriptor);
+
+    GPUQuerySet createQuerySet(GPUQuerySetDescriptor descriptor);
+};
+GPUDevice includes GPUObjectBase;
+```
+
+`GPUDevice` 有下列属性：
+
+- `features`, 类型为[GPUSupportedFeatures](https://www.w3.org/TR/webgpu/#gpusupportedfeatures)，只读
+
+  包含设备支持的`GPUFeatureName`值的集合（即使用这些值创建设备的功能）
+
+- `limits`, 类型为[GPUSupportedLimits](https://www.w3.org/TR/webgpu/#gpusupportedlimits)，只读
+
+  公开设备支持的限制（即使用这些限制创建设备）。
+
+
+- `queue`，类型为[GPUQueue](https://www.w3.org/TR/webgpu/#gpuqueue)，只读
+
+  该设备首要的`GPUQueue`
+
+`GPUDevice`的`[[device]]`是GPUDevice引用的[device](https://www.w3.org/TR/webgpu/#device)
+
+
+`GPUDevice`具有其上面的WebIDL定义中列出的方法。未在此处定义的方法，会在本文档的其他位置定义。
+
+- `destroy()`
+
+  销毁[device](https://www.w3.org/TR/webgpu/#device)，防止对其进行进一步的操作，未完成的异步操作将失败。
+
+  注意：可对设备进行多次销毁。
+
+  **调用者:**  `GPUDevice` this.
+
+  [内容时间线](https://www.w3.org/TR/webgpu/#content-timeline) 步骤:
+
+  1. 从此设备中`unmap()`所有`GPUBuffer`。
+  2. 在`this`的[Device timeline](https://www.w3.org/TR/webgpu/#device-timeline)执行后续步骤。
+
+  [设备时间线](https://www.w3.org/TR/webgpu/#device-timeline) 步骤:
+
+  1. 一旦此设备上任何队列中的操作都完成了，就在当前时间线上执行后续步骤。
+  2. [丢失此设备](https://www.w3.org/TR/webgpu/#lose-the-device)(`this`.`[[device]]`, `"destroyed"`)
+
+  注意：由于无法添加进一步操作到设备任务队列中，因此实现上可以立即中止未完成的异步操作并释放资源分配，包括刚刚取消映射的内存。
+
+`GPUDevice`允许的缓冲区用法为：
+
+- 总是允许: `MAP_READ`, `MAP_WRITE`, `COPY_SRC`, `COPY_DST`, `INDEX`, `VERTEX`, `UNIFORM`, `STORAGE`, `INDIRECT`, `QUERY_RESOLVE`
+
+
+`GPUDevice`允许的纹理用法为：
+
+- 总是允许: `COPY_SRC`, `COPY_DST`, `TEXTURE_BINDING`, `STORAGE_BINDING`, `RENDER_ATTACHMENT`
+
 ### 4.5. 案例[](https://www.w3.org/TR/webgpu/#initialization-examples)
 
 [](https://www.w3.org/TR/webgpu/#example-abcf3590)
