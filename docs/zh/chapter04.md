@@ -1,6 +1,6 @@
-## 4.初始化[]（https://www.w3.org/tr/webgpu/#initialization）
+## 4.[初始化](https://www.w3.org/tr/webgpu/#initialization)
 
-### 4.1. navigator.gpu []（https://www.w3.org/tr/webgpu/#navigator-gpu）
+### 4.1. [navigator.gpu](https://www.w3.org/tr/webgpu/#navigator-gpu)
 
 在浏览器的 [Window](https://html.spec.whatwg.org/multipage/nav-history-apis.html#window) 和 [DedicatedWorkerGlobalScope](https://html.spec.whatwg.org/multipage/workers.html#dedicatedworkerglobalscope) 上通过 [Navigator](https://html.spec.whatwg.org/multipage/system-state.html#navigator) 和 [WorkerNavigator](https://html.spec.whatwg.org/multipage/workers.html#workernavigator) 接口可以获得 [GPU](https://www.w3.org/TR/webgpu/#gpu) 对象，通过`navigator.gpu`可以访问：
 
@@ -12,7 +12,7 @@ Navigator 包含 NavigatorGPU;
 WorkerNavigator 包含 NavigatorGPU;
 ```
 
-### 4.2. GPU[](https://www.w3.org/TR/webgpu/#gpu-interface)
+### 4.2. [GPU](https://www.w3.org/TR/webgpu/#gpu-interface)
 
 `GPU`  类型是 WebGPU 的入口。
 
@@ -103,7 +103,7 @@ interface GPU {
 const gpuAdapter = await navigator.gpu.requestAdapter();
 ```
 
-#### 4.2.1.  确保适配器的能力[](https://www.w3.org/TR/webgpu/#adapter-capability-guarantees)
+#### 4.2.1.  [确保适配器的能力](https://www.w3.org/TR/webgpu/#adapter-capability-guarantees)
 
 `requestAdapter()` 返回的任何 `GPUAdapter` 必须提供以下保证：
 
@@ -148,7 +148,7 @@ const gpuAdapter = await navigator.gpu.requestAdapter();
 
 - `maxComputeInvocationsPerWorkgroup` 需要小于等于 `maxComputeWorkgroupSizeX` × `maxComputeWorkgroupSizeY` × `maxComputeWorkgroupSizeZ`.
 
-#### 4.2.2.  选择适配器[](https://www.w3.org/TR/webgpu/#adapter-selection)
+#### 4.2.2.  [选择适配器](https://www.w3.org/TR/webgpu/#adapter-selection)
 
 `GPURequestAdapterOptions` 向用户代理提供要求，指示哪种配置适合应用程序。
 
@@ -212,7 +212,7 @@ const gpuAdapter = await navigator.gpu.requestAdapter({
 });
 ```
 
-### 4.3. `GPU适配器`[](https://www.w3.org/TR/webgpu/#gpuadapter)
+### 4.3. [`GPU适配器`](https://www.w3.org/TR/webgpu/#gpuadapter)
 
 `GPU适配器(GPUAdapter)`封装了一个[适配器对象](https://www.w3.org/TR/webgpu/#adapter)，并且描述了它具备的能力(包括[特性](https://www.w3.org/TR/webgpu/#feature)和[限制](https://www.w3.org/TR/webgpu/#limit))。
 
@@ -378,7 +378,7 @@ const gpuAdapter = await navigator.gpu.requestAdapter();
 const gpuDevice = await gpuAdapter.requestDevice();
 ```
 
-#### 4.3.1. `GPUDeviceDescriptor`[](https://www.w3.org/TR/webgpu/#gpudevicedescriptor)
+#### 4.3.1. [`GPUDeviceDescriptor`](https://www.w3.org/TR/webgpu/#gpudevicedescriptor)
 
 `GPUDeviceDescriptor` 用来描述申请设备的需求。
 
@@ -426,7 +426,7 @@ const gpuDevice = await gpuAdapter.requestDevice({
 });
 ```
 
-##### 4.3.1.1. `GPUFeatureName`[](https://www.w3.org/TR/webgpu/#gpufeaturename)
+##### 4.3.1.1. [`GPUFeatureName`](https://www.w3.org/TR/webgpu/#gpufeaturename)
 
 每个`GPUFeatureName`标识了一组功能，如果可用，将允许使用WebGPU附加的用法，否则这些用法是无效的。
 
@@ -446,7 +446,7 @@ enum GPUFeatureName {
 };
 ```
 
-### 4.4. `GPUDevice`[](https://www.w3.org/TR/webgpu/#gpudevice)
+### 4.4. [`GPUDevice`](https://www.w3.org/TR/webgpu/#gpudevice)
 
 `GPUDevice`封装了一个[device](https://www.w3.org/TR/webgpu/#device)，并公开了该设备的功能函数。
 
@@ -536,7 +536,7 @@ GPUDevice includes GPUObjectBase;
 
 - 总是允许: `COPY_SRC`, `COPY_DST`, `TEXTURE_BINDING`, `STORAGE_BINDING`, `RENDER_ATTACHMENT`
 
-### 4.5. 案例[](https://www.w3.org/TR/webgpu/#initialization-examples)
+### 4.5. [案例](https://www.w3.org/TR/webgpu/#initialization-examples)
 
 [](https://www.w3.org/TR/webgpu/#example-abcf3590)
 一个强大的，带有错误处理请求的 `GPUAdapter` 和 `GPUDevice` 的示例
